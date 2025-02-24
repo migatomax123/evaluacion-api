@@ -31,4 +31,14 @@ export class AlumnoController {
   remove(@Param('id') id: string) {
     return this.alumnoService.remove(+id);
   }
+
+  @Get(':id/examenes-teoricos')
+  getExamenesTeoricos(@Param('id') id: string) {
+    return this.alumnoService.getExamenesTeoricos(+id);
+  }
+
+  @Get(':id/practicas')
+  getPracticas(@Param('id') id: string) {
+    return this.alumnoService.getPracticas(+id);
+  }
 }

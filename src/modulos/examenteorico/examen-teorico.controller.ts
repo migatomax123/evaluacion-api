@@ -31,4 +31,9 @@ export class ExamenTeoricoController {
   remove(@Param('id') id: string) {
     return this.examenTeoricoService.remove(+id);
   }
+
+  @Get(':id/alumnos-que-hacen')
+  getAlumnosQueHacen(@Param('id') id: string) {
+    return this.examenTeoricoService.getAlumnosQueHacen(+id);
+  }
 }

@@ -31,4 +31,14 @@ export class PracticaController {
   remove(@Param('id') id: string) {
     return this.practicaService.remove(+id);
   }
+
+  @Get(':id/alumnos-que-realizan')
+  getAlumnosQueRealizan(@Param('id') id: string) {
+    return this.practicaService.getAlumnosQueRealizan(+id);
+  }
+
+  @Get(':id/profesores-que-disenan')
+  getProfesoresQueDisenan(@Param('id') id: string) {
+    return this.practicaService.getProfesoresQueDisenan(+id);
+  }
 }

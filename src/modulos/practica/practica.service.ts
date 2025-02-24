@@ -4,12 +4,18 @@ import { Repository } from 'typeorm';
 import { Practica } from './entities/practica.entity';
 import { CreatePracticaDto } from './dto/create-practica.dto';
 import { UpdatePracticaDto } from './dto/update-practica.dto';
+import { AlumnoRealizaPractica } from '../alumnorealizapractica/entities/alumno-realiza-practica.entity';
+import { ProfesorDisenaPractica } from '../profesordiseñapractica/entities/profesor-disena-practica.entity';
 
 @Injectable()
 export class PracticaService {
   constructor(
     @InjectRepository(Practica)
     private practicaRepository: Repository<Practica>,
+    @InjectRepository(AlumnoRealizaPractica)
+    private alumnoRealizaPracticaRepository: Repository<AlumnoRealizaPractica>,
+    @InjectRepository(ProfesorDisenaPractica)
+    private profesorDisenaPracticaRepository: Repository<ProfesorDisenaPractica>,
   ) {}
 
   async create(createPracticaDto: CreatePracticaDto): Promise<Practica> {
@@ -38,5 +44,21 @@ export class PracticaService {
   async remove(id: number): Promise<void> {
     const practica = await this.findOne(id);
     await this.practicaRepository.remove(practica);
+  }
+
+  async getAlumnosQueRealizan(id: number): Promise<AlumnoRealizaPractica[]> {
+    const practica = await this.findOne(id);
+    return this.alumnoRealizaPracticaRepository.find({
+      where: { practicaId: id },
+      relations: ['alumno'],
+    });
+  }
+
+  async getProfesoresQueDisenan(id: number): Promise<ProfesorDisenaPractica[]> {
+    const practica = await this.findOne(id);
+    return this.profesorDisenaPracticaRepository.find({
+      where: { practicaId: id },
+      relations: ['profesor'],
+    });
   }
 }

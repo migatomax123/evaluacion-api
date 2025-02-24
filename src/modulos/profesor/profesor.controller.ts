@@ -31,4 +31,14 @@ export class ProfesorController {
   remove(@Param('id') id: string) {
     return this.profesorService.remove(+id);
   }
+
+  @Get(':id/examenes-teoricos')
+  getExamenesTeoricos(@Param('id') id: string) {
+    return this.profesorService.getExamenesTeoricos(+id);
+  }
+
+  @Get(':id/practicas-disenadas')
+  getPracticasDisenadas(@Param('id') id: string) {
+    return this.profesorService.getPracticasDisenadas(+id);
+  }
 }

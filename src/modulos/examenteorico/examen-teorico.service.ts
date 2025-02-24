@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { ExamenTeorico } from './entities/examen-teorico.entity';
 import { CreateExamenTeoricoDto } from './dto/create-examen-teorico.dto';
 import { UpdateExamenTeoricoDto } from './dto/update-examen-teorico.dto';
+import { AlumnoHaceExamenTeorico } from '../alumnohaceexamenteorico/entities/alumno-hace-examen-teorico.entity';
 
 @Injectable()
 export class ExamenTeoricoService {
   constructor(
     @InjectRepository(ExamenTeorico)
     private examenTeoricoRepository: Repository<ExamenTeorico>,
+    @InjectRepository(AlumnoHaceExamenTeorico)
+    private alumnoHaceExamenTeoricoRepository: Repository<AlumnoHaceExamenTeorico>,
   ) {}
 
   async create(createExamenTeoricoDto: CreateExamenTeoricoDto): Promise<ExamenTeorico> {
@@ -30,13 +33,21 @@ export class ExamenTeoricoService {
   }
 
   async update(id: number, updateExamenTeoricoDto: UpdateExamenTeoricoDto): Promise<ExamenTeorico> {
-    const examenTeorico = await this.findOne(id); // Reutiliza findOne para verificar la existencia
+    const examenTeorico = await this.findOne(id);
     this.examenTeoricoRepository.merge(examenTeorico, updateExamenTeoricoDto);
     return this.examenTeoricoRepository.save(examenTeorico);
   }
 
   async remove(id: number): Promise<void> {
-    const examenTeorico = await this.findOne(id); // Reutiliza findOne para verificar la existencia
+    const examenTeorico = await this.findOne(id);
     await this.examenTeoricoRepository.remove(examenTeorico);
+  }
+
+  async getAlumnosQueHacen(id: number): Promise<AlumnoHaceExamenTeorico[]> {
+    const examenTeorico = await this.findOne(id);
+    return this.alumnoHaceExamenTeoricoRepository.find({
+      where: { examenTeoricoId: id },
+      relations: ['alumno'],
+    });
   }
 }

@@ -4,12 +4,18 @@ import { Repository } from 'typeorm';
 import { Alumno } from './entities/alumno.entity';
 import { CreateAlumnoDto } from './dto/create-alumno.dto';
 import { UpdateAlumnoDto } from './dto/update-alumno.dto';
+import { AlumnoHaceExamenTeorico } from '../alumnohaceexamenteorico/entities/alumno-hace-examen-teorico.entity';
+import { AlumnoRealizaPractica } from '../alumnorealizapractica/entities/alumno-realiza-practica.entity';
 
 @Injectable()
 export class AlumnoService {
   constructor(
     @InjectRepository(Alumno)
     private alumnoRepository: Repository<Alumno>,
+    @InjectRepository(AlumnoHaceExamenTeorico)
+    private alumnoHaceExamenTeoricoRepository: Repository<AlumnoHaceExamenTeorico>,
+    @InjectRepository(AlumnoRealizaPractica)
+    private alumnoRealizaPracticaRepository: Repository<AlumnoRealizaPractica>,
   ) {}
 
   async create(createAlumnoDto: CreateAlumnoDto): Promise<Alumno> {
@@ -30,13 +36,29 @@ export class AlumnoService {
   }
 
   async update(id: number, updateAlumnoDto: UpdateAlumnoDto): Promise<Alumno> {
-    const alumno = await this.findOne(id); // Reutiliza findOne para verificar la existencia
+    const alumno = await this.findOne(id);
     this.alumnoRepository.merge(alumno, updateAlumnoDto);
     return this.alumnoRepository.save(alumno);
   }
 
   async remove(id: number): Promise<void> {
-    const alumno = await this.findOne(id); // Reutiliza findOne para verificar la existencia
+    const alumno = await this.findOne(id);
     await this.alumnoRepository.remove(alumno);
+  }
+
+  async getExamenesTeoricos(id: number): Promise<AlumnoHaceExamenTeorico[]> {
+    const alumno = await this.findOne(id);
+    return this.alumnoHaceExamenTeoricoRepository.find({
+      where: { alumnoId: id },
+      relations: ['examenTeorico'],
+    });
+  }
+
+  async getPracticas(id: number): Promise<AlumnoRealizaPractica[]> {
+    const alumno = await this.findOne(id);
+    return this.alumnoRealizaPracticaRepository.find({
+      where: { alumnoId: id },
+      relations: ['practica'],
+    });
   }
 }
